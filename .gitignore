@@ -1,0 +1,21 @@
+# models / datasets (license + size) - download separately
+*.tflite
+*.task
+*.npz
+*.h5
+*.keras
+*.pt
+*.onnx
+datasets/
+data/
+results/
+captures/
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+infer_env/
+.ipynb_checkpoints/
+# 동물·포켓몬 이미지 (저작권) - 공개 저장소에 올리지 않음
+src/static/images/

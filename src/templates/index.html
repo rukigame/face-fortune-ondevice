@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fff8f5" />
+  <title>Face Fortune · 나의 얼굴 이야기</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css', v='title-wrap-v1') }}" />
+</head>
+<body>
+  <div class="bg-blob blob-pink"></div>
+  <div class="bg-blob blob-lilac"></div>
+  <div class="bg-blob blob-yellow"></div>
+
+  <header class="topbar shell">
+    <button class="brand brand-button" id="brandHomeBtn" type="button" aria-label="Face Fortune 홈">
+      <div class="brand-mark">✦</div>
+      <div>
+        <div class="brand-title">Face Fortune</div>
+        <div class="brand-sub">나의 얼굴 이야기</div>
+      </div>
+    </button>
+
+    <div class="top-actions">
+      <button class="header-home-btn" id="homeBtn" type="button" hidden>처음으로</button>
+      <div class="camera-state" id="cameraState">
+        <span></span><b>카메라 연결 중</b>
+      </div>
+    </div>
+  </header>
+
+  <main id="top" class="shell page">
+
+    <!-- HOME / MODE SELECT -->
+    <section class="mode-home" id="homeSection">
+      <div class="mode-hero">
+        <div class="intro-badge">AI FACE EXPERIENCE · FOR FUN</div>
+        <h1>오늘, 내 얼굴에는<br /><span class="hero-second-line">어떤 이야기가 담겨 있을까요?</span></h1>
+        <p>
+          얼굴의 특징을 AI로 분석해 관상, 동물, 포켓몬까지<br />나와 닮은 모습을 재미있게 찾아보세요.
+        </p>
+      </div>
+
+      <div class="mode-grid">
+        <button class="mode-card fortune-mode" type="button" data-mode="fortune">
+          <div class="mode-icon">🔮</div>
+          <div class="mode-copy">
+            <span>FACE READING</span>
+            <h2>내 관상 알아보기</h2>
+            <p>눈, 코, 입, 얼굴형의 특징을 살펴보고 전통 관상에서는 어떻게 풀이하는지 알아봐요.</p>
+          </div>
+          <div class="mode-arrow">→</div>
+        </button>
+
+        <button class="mode-card animal-mode" type="button" data-mode="animal">
+          <div class="mode-icon">🐾</div>
+          <div class="mode-copy">
+            <span>ANIMAL MATCH</span>
+            <h2>나랑 닮은 동물 찾기</h2>
+            <p>얼굴형과 눈매, 전체적인 인상을 분석해 나와 가장 닮은 동물을 찾아봐요.</p>
+          </div>
+          <div class="mode-arrow">→</div>
+        </button>
+
+        <button class="mode-card pokemon-mode" type="button" data-mode="pokemon">
+          <div class="mode-icon">🎮</div>
+          <div class="mode-copy">
+            <span>POKÉMON MATCH</span>
+            <h2>나랑 닮은 포켓몬 찾기</h2>
+            <p>얼굴의 분위기와 동물 분석 결과를 바탕으로 나와 닮은 포켓몬을 찾아봐요.</p>
+          </div>
+          <div class="mode-arrow">→</div>
+        </button>
+
+        <button class="mode-card all-mode featured" type="button" data-mode="all">
+          <div class="recommended">추천</div>
+          <div class="mode-icon">✨</div>
+          <div class="mode-copy">
+            <span>ALL IN ONE</span>
+            <h2>내 얼굴 종합 분석</h2>
+            <p>관상부터 동물, 포켓몬까지 한 번의 얼굴 분석으로 모두 확인해보세요.</p>
+          </div>
+          <div class="mode-arrow">→</div>
+        </button>
+      </div>
+
+      <div class="home-note">
+        <span>🔒</span>
+        <p><b>얼굴 분석은 Raspberry Pi 내부에서 처리해요.</b><br />촬영한 얼굴 사진은 외부 AI 서비스로 전송하지 않아요.</p>
+      </div>
+    </section>
+
+    <!-- SCAN -->
+    <section class="scan-flow" id="scanFlow" hidden>
+      <div class="flow-heading">
+        <button class="back-link" id="backToModesBtn" type="button">← 다른 분석 선택</button>
+        <div class="selected-mode-pill" id="selectedModePill">✨ 종합 분석</div>
+      </div>
+
+      <section class="intro compact-intro">
+        <div class="intro-badge" id="scanBadge">ALL IN ONE</div>
+        <h1 id="scanTitle">한 번의 촬영으로<br /><span>얼굴을 분석해볼게요</span></h1>
+        <p id="scanSubtitle">얼굴을 가이드 안에 맞춘 뒤 정면을 바라봐주세요.</p>
+      </section>
+
+      <section class="scan-card app-card" id="scanSection">
+        <div class="scan-head">
+          <div>
+            <div class="section-label">FACE SCAN</div>
+            <h2>얼굴을 보여주세요</h2>
+            <p>얼굴을 가이드 안에 맞추고 정면을 바라봐주세요.</p>
+          </div>
+          <div class="sparkle">✧</div>
+        </div>
+
+        <div class="camera-wrap" id="cameraWrap">
+          <img id="cameraFeed" src="/video_feed" alt="실시간 얼굴 카메라" />
+          <div class="soft-vignette"></div>
+
+          <div class="face-guide" id="faceGuide" aria-hidden="true">
+            <div class="guide-oval"></div>
+            <div class="guide-shoulders"></div>
+          </div>
+
+          <div class="camera-message">
+            <div class="guide-copy">
+              <small id="guideEyebrow">FACE GUIDE</small>
+              <strong id="statusFloating">얼굴을 가이드 안에 맞춰주세요</strong>
+            </div>
+            <b id="progressFloating">00 / 30</b>
+          </div>
+        </div>
+
+        <div class="simple-guide-row">
+          <span>얼굴 전체가 보이게</span>
+          <i></i>
+          <span>정면을 바라보기</span>
+          <i></i>
+          <span>잠시 그대로 있기</span>
+        </div>
+
+        <div class="progress-card">
+          <div class="progress-copy">
+            <span id="statusText">얼굴을 가이드 안에 맞춰주세요</span>
+            <b id="progressText">0%</b>
+          </div>
+          <div class="progress-track"><div id="progressBar"></div></div>
+        </div>
+
+        <div class="actions">
+          <button class="primary-btn" id="startBtn" disabled>
+            <span id="startBtnText">✨ 분석 시작하기</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+          <button class="secondary-btn" id="cancelBtn" hidden>취소</button>
+        </div>
+
+        <p class="microcopy">
+          얼굴 전체가 가이드 안에 들어오도록 맞춘 뒤, 분석이 끝날 때까지 잠시 그대로 있어주세요.
+        </p>
+      </section>
+    </section>
+
+    <!-- RESULT -->
+    <section class="result-zone" id="resultZone" hidden>
+      <div class="result-title">
+        <div class="result-icon" id="resultIcon">♡</div>
+        <div>
+          <div class="section-label" id="resultEyebrow">YOUR FACE PROFILE</div>
+          <h2 id="resultTitle">분석이 끝났어요!</h2>
+          <p id="resultSubtitle">측정된 얼굴 특징을 보기 쉽게 정리했어요.</p>
+        </div>
+        <button class="secondary-btn" id="newScanBtn">다시 촬영하기</button>
+      </div>
+
+      <div class="result-top" id="resultTop">
+        <article class="portrait-card app-card">
+          <div class="portrait-badge">MY FACE</div>
+          <div class="image-shell">
+            <img id="resultImage" alt="분석된 얼굴 사진" />
+          </div>
+          <div class="portrait-meta">
+            <span class="done-dot"></span>
+            <div>
+              <b>30-frame 얼굴 분석 완료</b>
+              <small id="captureId">—</small>
+            </div>
+          </div>
+        </article>
+
+        <article class="match-card app-card" id="matchCard">
+          <div class="card-title-row">
+            <div>
+              <div class="section-label pink" id="matchEyebrow">LOOKALIKE</div>
+              <h3 id="matchTitle">나랑 닮은 동물과 포켓몬</h3>
+              <p id="matchSubtitle">내 얼굴 특징을 바탕으로 찾아낸 닮은 이미지를 만나보세요.</p>
+            </div>
+            <div class="mini-icon" id="matchIcon">🐾</div>
+          </div>
+          <div id="topMatch" class="top-match"></div>
+          <div id="matchList" class="match-list"></div>
+        </article>
+      </div>
+
+      <div class="result-bottom" id="resultBottom">
+        <article class="metrics-card app-card" id="metricsCard">
+          <div class="card-title-row">
+            <div>
+              <div class="section-label purple">FACE FEATURES</div>
+              <h3>나의 얼굴 특징</h3>
+              <p>Celeb-K 기준 분포와 비교한 1~10단계 결과예요.</p>
+            </div>
+            <span class="soft-badge">10 LEVEL</span>
+          </div>
+          <div id="metricsGrid" class="metrics-grid"></div>
+        </article>
+
+        <article class="fortune-card app-card" id="fortuneCard">
+          <div class="card-title-row">
+            <div>
+              <div class="section-label gold">FACE STORY</div>
+              <h3>내 인생의 관상 이야기</h3>
+              <p>어린 시절부터 말년까지, 내 얼굴에 담긴 인생의 흐름을 만나보세요.</p>
+            </div>
+            <div class="mini-icon">🔮</div>
+          </div>
+          <section class="fortune-life" id="fortuneLife" hidden>
+            <div class="fortune-life-intro">
+              <span class="fortune-life-kicker">✦ MY LIFE STORY</span>
+              <div class="fortune-life-title-row">
+                <h4 id="fortuneLifeHeadline">나의 인생 관상 이야기</h4>
+              </div>
+              <p id="fortuneLifeIntro"></p>
+            </div>
+            <div class="fortune-life-chapters" id="fortuneLifeChapters"></div>
+            <p class="fortune-life-notice" id="fortuneLifeNotice"></p>
+          </section>
+          <section class="fortune-topics" id="fortuneTopics" hidden>
+            <div class="fortune-topics-heading">
+              <span>✧ YOUR FORTUNE</span>
+              <h4>나의 운세 자세히 보기</h4>
+              <p>궁금한 주제를 눌러 전통 관상 풀이를 확인해보세요.</p>
+            </div>
+            <div class="fortune-topics-grid" id="fortuneTopicGrid"></div>
+          </section>
+          <details class="fortune-breakdown" id="fortuneBreakdown">
+            <summary>이 관상은 어떻게 나왔나요? · 얼굴 분석 근거 <span>＋</span></summary>
+            <div class="fortune-eye" id="fortuneEye" hidden></div>
+          <div class="fortune-labels-heading" id="fortuneLabelsTitle" hidden>얼굴 특징 · 5단계 분석</div>
+          <div class="fortune-labels" id="fortuneLabels" hidden></div>
+          <div class="fortune-special" id="fortuneSpecial" hidden></div>
+          <div class="fortune-lines" id="fortuneLines"></div>
+          <details class="fortune-traditional" id="fortuneTraditional" hidden>
+            <summary>전통 관상 속설 · 운세 7가지 보기 <span>＋</span></summary>
+            <div id="fortuneLuck"></div>
+          </details>
+          </details>
+          <div class="disclaimer">
+            오락용 해석입니다. 성격·능력·건강·미래를 과학적으로 판정하지 않습니다.
+          </div>
+        </article>
+      </div>
+
+      <section class="more-results app-card">
+        <div>
+          <div class="section-label">MORE RESULTS</div>
+          <h3>다른 결과도 확인해볼까요?</h3>
+          <p>다시 촬영하지 않아도 같은 얼굴 분석으로 다른 결과를 바로 볼 수 있어요.</p>
+        </div>
+        <div class="result-mode-switch">
+          <button type="button" data-result-mode="fortune">🔮 관상 보기</button>
+          <button type="button" data-result-mode="animal">🐾 동물 찾기</button>
+          <button type="button" data-result-mode="pokemon">🎮 포켓몬 찾기</button>
+          <button type="button" data-result-mode="all">✨ 전체 결과</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="about-card" id="aboutCard">
+      <details>
+        <summary>
+          <div>
+            <span class="about-icon">AI</span>
+            <span>
+              <b>이 분석은 어떻게 만들어졌나요?</b>
+              <small>얼굴 검출·랜드마크·비율 측정 결과와 팀이 준비한 규칙 데이터를 조합해 결과를 만들어요.</small>
+            </span>
+          </div>
+          <i>＋</i>
+        </summary>
+        <div class="tech-grid">
+          <div><b>01</b><strong>얼굴 검출</strong><span>YOLO · WIDER FACE</span></div>
+          <div><b>02</b><strong>랜드마크</strong><span>WFLW 98pt + EyeRefine</span></div>
+          <div><b>03</b><strong>얼굴 측정</strong><span>42 geometric metrics</span></div>
+          <div><b>04</b><strong>기준 비교</strong><span>Celeb-K 10 levels</span></div>
+          <div><b>05</b><strong>결과 생성</strong><span>Rule · Animal · Pokémon</span></div>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="shell footer">
+    <div>
+      <b>Face Fortune</b>
+      <span>AI 얼굴 분석 체험</span>
+    </div>
+    <small>Vision-first · On-device AI</small>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="{{ url_for('static', filename='app.js', v='title-wrap-v1') }}"></script>
+</body>
+</html>
